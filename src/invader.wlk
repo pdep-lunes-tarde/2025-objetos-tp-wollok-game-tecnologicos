@@ -9,3 +9,4 @@ class Invader {
     }
     method position() = game.center()
 }
+

@@ -1,7 +1,6 @@
 import wollok.game.*
+
 object spaceInvaders{
-
-
     method ancho() {
         return 224
     }
@@ -11,6 +10,7 @@ object spaceInvaders{
     method configurar(){
         game.width(self.ancho())
         game.height(self.alto())
+        game.boardGround("fondo.png") 
         game.cellSize(1)
         // game.addVisual(invader)
         // game.addVisual(ship)
