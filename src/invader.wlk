@@ -1,11 +1,11 @@
 import wollok.game.*
 import spaceInvaders.*
 
-class Invader {
+object invader {// class
     
 
     method image(){
-        return "invader.png"
+        return "invader1.png"
     }
     method position() = game.center()
 }
