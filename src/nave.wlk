@@ -1,5 +1,6 @@
 import src.spaceInvaders.*
 import wollok.game.*
+import proyectil.Proyectil
 object nave{
   var property position = game.at(0,0)
   var property direccion = ""
@@ -42,6 +43,14 @@ object nave{
       self.moverDerecha()
     }
   }
+  //--------proyectiles--------
+  method disparar(){
+    const nuevo_disparo= new Proyectil(position=self.position().up(15).right(3))//creo una bala por disparo
+    nuevo_disparo.lanzar()
+  }
+
+
+
  
 }
 
@@ -62,4 +71,5 @@ object sinDireccion{
     return posicion
   }
 }
+
  

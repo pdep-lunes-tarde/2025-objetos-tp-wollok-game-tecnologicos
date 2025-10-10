@@ -56,6 +56,9 @@ object spaceInvaders{
                 nave.direccion("")
             }
         })
+
+        //---------Disparos---------
+        keyboard.space().onPressDo({nave.disparar()})
     }
     method jugar(){
         self.configurar()
