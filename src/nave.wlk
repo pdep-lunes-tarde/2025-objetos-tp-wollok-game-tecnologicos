@@ -1,4 +1,4 @@
-import src.spaceInvaders.*
+
 import wollok.game.*
 import proyectil.Proyectil
 object nave{
@@ -16,10 +16,17 @@ object nave{
       return "nave.png"
   }
   //MOVIMIENTO
+ /*method moverIzquierda(){
+      position = position.left(5)
+ 
+  }
 
+ method moverDerecha() {
+      position = position.right(5)
+  }*/
   // method direccion(){
 
-  // }
+   //}
 
   //------movimiento nave-------
   
@@ -45,8 +52,11 @@ object nave{
   }
   //--------proyectiles--------
   method disparar(){
-    const nuevo_disparo= new Proyectil(position=self.position().up(15).right(3))//creo una bala por disparo
+    const nuevo_disparo= new Proyectil(position=self.position().up(15))//.right(3))//creo una bala por disparo
     nuevo_disparo.lanzar()
+  }
+  method serDestruidaPor(proyectilEnemigo){
+
   }
 
 

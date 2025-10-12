@@ -1,11 +1,13 @@
 import wollok.game.*
 import nave.*
-import invader.invader
+import invader.Invader
+import flota.*
+import proyectil.*
+import muro.Muro
 
 object spaceInvaders{
 
     var tickActual = 0
-
     method ancho() {
         return 224
     }
@@ -19,15 +21,27 @@ object spaceInvaders{
         game.cellSize(5)
         nave.posicionMedio()
         game.addVisual(nave)
-        game.addVisual(invader)
+        flota.crear() 
+        //MUROS
+        game.addVisual(new Muro(position = game.at(40, 90)))
+        game.addVisual(new Muro(position = game.at(90, 90)))
+        game.addVisual(new Muro(position = game.at(140, 90)))
+        game.addVisual(new Muro(position = game.at(190, 90)))
 
-        //game.onTick(1000, "movimientoIzq", { nave.moverIzquierda() })
+     //game.onTick(1000, "movimientoIzq", { nave.moverIzquierda() })
         //game.onTick(1000, "movimiento", { nave.moverDerecha() })
-           
-        
-        
+
+
+        //-------Disparo random de flota
+            game.onTick(1000, "disparo_constante_flota", { =>
+            flota.ordenarDisparoAleatorio()
+            
+        })
+      
+        //keyboard.left().onPressDo { nave.moverIzquierda() }
+        //keyboard.right().onPressDo { nave.moverDerecha()}
         //Movimiento
-        //game.onTick(30, "moverNave", {nave.moverContinuo()})
+        game.onTick(30, "moverNave", {nave.moverContinuo()})
 
         // Cambia dirección cuando se presiona una tecla
         keyboard.a().onPressDo {
@@ -50,41 +64,21 @@ object spaceInvaders{
 
         game.onTick(30, "moverNave", {
             tickActual += 1
-            nave.moverContinuo()
+            //nave.moverContinuo()
             
             if (tickActual - nave.ultimoTick() > 5) {
                 nave.direccion("")
             }
         })
-
+    
         //---------Disparos---------
         keyboard.space().onPressDo({nave.disparar()})
+
+
+    
     }
     method jugar(){
-        self.configurar()
-        game.start()
+    self.configurar()
+    game.start()
     }
 }
-
-/*
-
-object izquierda {
-    method siguientePosicion(posicion) {
-        return posicion.left(1)
-    }
-}
-object abajo {
-    method siguientePosicion(posicion) {
-        return posicion.down(1)
-    }
-}
-object arriba {
-    method siguientePosicion(posicion) {
-        return posicion.up(1)
-    }
-}
-object derecha {
-    method siguientePosicion(posicion) {
-        return posicion.right(1)
-    }
-}*/
