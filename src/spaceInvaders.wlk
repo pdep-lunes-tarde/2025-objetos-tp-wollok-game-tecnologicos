@@ -7,7 +7,7 @@ import muro.Muro
 
 object spaceInvaders{
 
-    var tickActual = 0
+    // var tickActual = 0
     method ancho() {
         return 224
     }
@@ -22,57 +22,47 @@ object spaceInvaders{
         nave.posicionMedio()
         game.addVisual(nave)
         flota.crear() 
+        
         //MUROS
         game.addVisual(new Muro(position = game.at(40, 90)))
         game.addVisual(new Muro(position = game.at(90, 90)))
         game.addVisual(new Muro(position = game.at(140, 90)))
         game.addVisual(new Muro(position = game.at(190, 90)))
 
-     //game.onTick(1000, "movimientoIzq", { nave.moverIzquierda() })
-        //game.onTick(1000, "movimiento", { nave.moverDerecha() })
 
+        // -----------------------
+        // | * Movimiento Nave * |
+        // -----------------------
+        game.onTick(10, "moverNave", {nave.mover()})
 
-        //-------Disparo random de flota
-            game.onTick(1000, "disparo_constante_flota", { =>
-            flota.ordenarDisparoAleatorio()
-            
-        })
-      
-        //keyboard.left().onPressDo { nave.moverIzquierda() }
-        //keyboard.right().onPressDo { nave.moverDerecha()}
-        //Movimiento
-        game.onTick(30, "moverNave", {nave.moverContinuo()})
-
-        // Cambia dirección cuando se presiona una tecla
         keyboard.a().onPressDo {
-            nave.direccion("izquierda")
-            nave.ultimoTick(tickActual)
+            nave.direccion(izquierda)
         }
         keyboard.left().onPressDo {
-            nave.direccion("izquierda")
-            nave.ultimoTick(tickActual)
+            nave.direccion(izquierda)
         }
-
         keyboard.d().onPressDo {
-            nave.direccion ("derecha") 
-            nave.ultimoTick(tickActual)
+            nave.direccion(derecha)
         }
         keyboard.right().onPressDo {
-            nave.direccion ("derecha")
-            nave.ultimoTick(tickActual)
+            nave.direccion(derecha)
+        }
+        keyboard.down().onPressDo {
+            nave.direccion(sinDireccion)
+        }
+        keyboard.s().onPressDo {
+            nave.direccion(sinDireccion)
         }
 
-        game.onTick(30, "moverNave", {
-            tickActual += 1
-            //nave.moverContinuo()
-            
-            if (tickActual - nave.ultimoTick() > 5) {
-                nave.direccion("")
-            }
+        //-------Disparo random de flota
+        game.onTick(1000, "disparo_constante_flota", { =>
+            flota.ordenarDisparoAleatorio()
         })
-    
+
         //---------Disparos---------
         keyboard.space().onPressDo({nave.disparar()})
+        keyboard.up().onPressDo{nave.disparar()}
+        keyboard.w().onPressDo{nave.disparar()}
 
 
     
