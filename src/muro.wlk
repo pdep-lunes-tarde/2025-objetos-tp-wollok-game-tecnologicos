@@ -5,7 +5,7 @@ class Muro {
     var property position=game.origin()
     var vidas=4
     method image() {
-        return "pared.jpg"
+        return "pared.png"
     }
    method recibirProyectil(){
     vidas=vidas-1

@@ -33,10 +33,13 @@ var property aliens = []
   aliens.remove(alien)
 }
 
- method ordenarDisparoAleatorio() {
+method ordenarDisparoAleatorio() {
     if (not aliens.isEmpty()) {
- const alienQueDispara = aliens.anyOne()
-    alienQueDispara.disparar()
-}}
+        const alienQueDispara = aliens.anyOne()
+        const proyectilCreado = alienQueDispara.disparar()
 
+        return proyectilCreado 
+    }
+    return null 
+}
 }

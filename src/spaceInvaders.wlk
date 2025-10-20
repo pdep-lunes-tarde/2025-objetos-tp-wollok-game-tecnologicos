@@ -6,8 +6,9 @@ import proyectil.*
 import muro.Muro
 
 object spaceInvaders{
+    var property todosLosProyectiles = []
 
-    // var tickActual = 0
+
     method ancho() {
         return 224
     }
@@ -55,20 +56,44 @@ object spaceInvaders{
         }
 
         //-------Disparo random de flota
-        game.onTick(1000, "disparo_constante_flota", { =>
-            flota.ordenarDisparoAleatorio()
+        game.onTick(1000, "disparo_constante_flota", {
+            const proyectilFlota = flota.ordenarDisparoAleatorio()
+            todosLosProyectiles.add(proyectilFlota)
+            
         })
 
         //---------Disparos---------
-        keyboard.space().onPressDo({nave.disparar()})
-        keyboard.up().onPressDo{nave.disparar()}
-        keyboard.w().onPressDo{nave.disparar()}
-
-
+        keyboard.space().onPressDo{
+            nave.disparar()
+            
+        }//todosLosProyectiles.add(proyectilNave)
+        keyboard.up().onPressDo{
+            nave.disparar()
+            
+        }
+        keyboard.w().onPressDo{
+            nave.disparar()
+            
+        }
     
+
+        game.onTick(50, 
+        "actualizarProyectiles", {
+                    
+
+            // Mover proyectiles
+            todosLosProyectiles.forEach({ proyectil => proyectil.mover() })
+
+            //Filtrar fuera de pantalla
+            const proyectilesFuera = todosLosProyectiles.filter({ p => p.estaFueraDePantalla() })
+
+            //Eliminar visual y sacar de lista
+            proyectilesFuera.forEach({ p => game.removeVisual(p) })
+            todosLosProyectiles.removeAll(proyectilesFuera)
+        })
     }
     method jugar(){
-    self.configurar()
-    game.start()
+        self.configurar()
+        game.start()
     }
 }

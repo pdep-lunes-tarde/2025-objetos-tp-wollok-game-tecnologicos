@@ -1,8 +1,10 @@
+import src.spaceInvaders.*
 
 import wollok.game.*
 import proyectil.Proyectil
 object nave{
   var property position = game.at(0,0)
+  const pixeles_velocidad = 2
   var property direccion = sinDireccion
 
   method posicionMedio(){
@@ -11,22 +13,24 @@ object nave{
   }
 
   method image(){
-      return "nave.png"
+    return "nave.png"
   }
   
   method mover(){
-    var nuevaPosicion = direccion.siguientePosicion(position)
+    var nuevaPosicion = direccion.siguientePosicion(position, pixeles_velocidad)
 
-    if(nuevaPosicion.x() >= 0 && nuevaPosicion.x()<= game.width() ){
+    if(nuevaPosicion.x() >= 0 && nuevaPosicion.x()<= (game.width() - (10)) ){
       position = nuevaPosicion
     }
   }
 
   //--------proyectiles--------
   method disparar(){
-    const nuevo_disparo= new Proyectil(position=self.position().up(15))//.right(3))//creo una bala por disparo
+    const nuevo_disparo = new Proyectil(position = self.position().up(15))//.right(3))//creo una bala por disparo
     nuevo_disparo.lanzar()
+    //return nuevo_disparo
   }
+
   method serDestruidaPor(proyectilEnemigo){
 
   }
@@ -35,19 +39,19 @@ object nave{
 }
 
 object izquierda {
-  method siguientePosicion(posicion) {
-    return posicion.left(2)
+  method siguientePosicion(posicion, velocidad) {
+    return posicion.left(velocidad)
   }
 }
 
 object derecha {
-  method siguientePosicion(posicion) {
-    return posicion.right(2)
+  method siguientePosicion(posicion, velocidad) {
+    return posicion.right(velocidad)
   }
 }
 
 object sinDireccion{
-  method siguientePosicion(posicion) {
+  method siguientePosicion(posicion, _) {
     return posicion
   }
 }
