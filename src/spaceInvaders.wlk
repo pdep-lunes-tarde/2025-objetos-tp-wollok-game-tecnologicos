@@ -64,16 +64,16 @@ object spaceInvaders{
 
         //---------Disparos---------
         keyboard.space().onPressDo{
-            nave.disparar()
-            
-        }//todosLosProyectiles.add(proyectilNave)
+            const proyectilNave = nave.disparar()
+            todosLosProyectiles.add(proyectilNave)
+        }
         keyboard.up().onPressDo{
-            nave.disparar()
-            
+            const proyectilNave = nave.disparar()
+            todosLosProyectiles.add(proyectilNave)
         }
         keyboard.w().onPressDo{
-            nave.disparar()
-            
+            const proyectilNave = nave.disparar()
+            todosLosProyectiles.add(proyectilNave)
         }
     
 

@@ -28,7 +28,7 @@ object nave{
   method disparar(){
     const nuevo_disparo = new Proyectil(position = self.position().up(15))//.right(3))//creo una bala por disparo
     nuevo_disparo.lanzar()
-    //return nuevo_disparo
+    return nuevo_disparo
   }
 
   method serDestruidaPor(proyectilEnemigo){

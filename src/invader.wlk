@@ -31,8 +31,9 @@ class Invader {// class
     }
 
     method disparar(){
-        const proyectil_invader = new Proyectil_alien(position=self.position())
+        const proyectil_invader = new Proyectil_alien(position=self.position(), direccion = abajo)
         proyectil_invader.lanzar()
+        return proyectil_invader
     }
 
    
