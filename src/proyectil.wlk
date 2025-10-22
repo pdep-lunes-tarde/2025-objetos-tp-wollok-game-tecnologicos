@@ -30,9 +30,7 @@ class Proyectil{
         return direccion.siguientePosicion(self.position(), pixeles_velocidad) 
     }
 }
-class Proyectil_alien inherits Proyectil{
-    // direccion para abajo
-}
+class Proyectil_alien inherits Proyectil(direccion = abajo){}
 
 object arriba {
     method siguientePosicion(unaPosicion, pixeles) {
