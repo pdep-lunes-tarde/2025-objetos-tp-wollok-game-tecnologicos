@@ -6,8 +6,9 @@ import proyectil.*
 import muro.Muro
 
 object spaceInvaders{
-    var property todosLosProyectiles = []
-
+    var property proyectilesNave = []
+    var property proyectilesInvader = []
+    var property muros = []
 
     method ancho() {
         return 224
@@ -23,75 +24,89 @@ object spaceInvaders{
         nave.posicionMedio()
         game.addVisual(nave)
         flota.crear() 
-        
-        //MUROS
-        game.addVisual(new Muro(position = game.at(40, 90)))
-        game.addVisual(new Muro(position = game.at(90, 90)))
-        game.addVisual(new Muro(position = game.at(140, 90)))
-        game.addVisual(new Muro(position = game.at(190, 90)))
+        self.crearMuros()
 
+        // ------ Movimiento Nave -------
+        game.onTick(10, "moverNave", { nave.mover() })
 
-        // -----------------------
-        // | * Movimiento Nave * |
-        // -----------------------
-        game.onTick(10, "moverNave", {nave.mover()})
+        keyboard.a().onPressDo { nave.direccion(izquierda) }
+        keyboard.left().onPressDo { nave.direccion(izquierda) }
 
-        keyboard.a().onPressDo {
-            nave.direccion(izquierda)
-        }
-        keyboard.left().onPressDo {
-            nave.direccion(izquierda)
-        }
-        keyboard.d().onPressDo {
-            nave.direccion(derecha)
-        }
-        keyboard.right().onPressDo {
-            nave.direccion(derecha)
-        }
-        keyboard.down().onPressDo {
-            nave.direccion(sinDireccion)
-        }
-        keyboard.s().onPressDo {
-            nave.direccion(sinDireccion)
-        }
+        keyboard.d().onPressDo { nave.direccion(derecha) }
+        keyboard.right().onPressDo { nave.direccion(derecha) }
 
-        //-------Disparo random de flota
+        keyboard.s().onPressDo { nave.direccion(sinDireccion) }
+        keyboard.down().onPressDo { nave.direccion(sinDireccion) }
+
+        //--- Trigger disparos de flota ---
         game.onTick(1000, "disparo_constante_flota", {
-            const proyectilFlota = flota.ordenarDisparoAleatorio()
-            todosLosProyectiles.add(proyectilFlota)
-            
+            const proyectilInvader = flota.ordenarDisparoAleatorio()
+            proyectilesInvader.add(proyectilInvader)
         })
 
-        //---------Disparos---------
+        //-------- Inputs Disparos --------
         keyboard.space().onPressDo{
             const proyectilNave = nave.disparar()
-            todosLosProyectiles.add(proyectilNave)
+            proyectilesNave.add(proyectilNave)
         }
         keyboard.up().onPressDo{
             const proyectilNave = nave.disparar()
-            todosLosProyectiles.add(proyectilNave)
+            proyectilesNave.add(proyectilNave)
         }
         keyboard.w().onPressDo{
             const proyectilNave = nave.disparar()
-            todosLosProyectiles.add(proyectilNave)
+            proyectilesNave.add(proyectilNave)
         }
-    
-
+            
+        // ---- Tick principal del Juego ---
         game.onTick(50, 
-        "actualizarProyectiles", {
-                    
-
+        "actualizarJuego", {
             // Mover proyectiles
-            todosLosProyectiles.forEach({ proyectil => proyectil.mover() })
+            proyectilesNave.forEach({ p => p.mover() }) 
+            proyectilesInvader.forEach({ p => p.mover()})
 
-            //Filtrar fuera de pantalla
-            const proyectilesFuera = todosLosProyectiles.filter({ p => p.estaFueraDePantalla() })
+            self.colisionInvaderVsNave()
+            self.colisionNaveVsInvader()
+            self.colisionMuros()
 
-            //Eliminar visual y sacar de lista
-            proyectilesFuera.forEach({ p => game.removeVisual(p) })
-            todosLosProyectiles.removeAll(proyectilesFuera)
+            self.eliminarProyectilesFOV()
         })
     }
+
+    method colisionInvaderVsNave(){
+
+    }
+    method colisionNaveVsInvader(){
+    
+    }
+    method colisionMuros() {
+        
+    }
+        
+    method eliminarProyectilesFOV(){
+        //Proyectiles de la nave
+        const fueraNave = proyectilesNave.filter({ p => p.estaFueraDePantalla() })
+        if (!fueraNave.isEmpty()){
+            fueraNave.forEach({ p => p.desactivar() })
+            proyectilesNave.removeAll(fueraNave)
+        }
+
+        //Proyectiles de los invaders
+        const fueraInvaders = proyectilesInvader.filter({ p => p.estaFueraDePantalla() })
+        if (!fueraInvaders.isEmpty()){
+            fueraInvaders.forEach({ p => p.desactivar() })
+            proyectilesInvader.removeAll(fueraInvaders)
+        }
+    }
+
+    method crearMuros() {
+        muros.add(new Muro(position = game.at(40, 90)))
+        muros.add(new Muro(position = game.at(90, 90)))
+        muros.add(new Muro(position = game.at(140, 90)))
+        muros.add(new Muro(position = game.at(190, 90)))
+        muros.forEach({ m => game.addVisual(m) })
+    }
+
     method jugar(){
         self.configurar()
         game.start()
