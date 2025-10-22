@@ -7,14 +7,11 @@ object nave{
   const pixeles_velocidad = 2
   var property direccion = sinDireccion
 
-  method posicionMedio(){
-    position = game.at(game.width() / 2, 30)// posicion inicial (queda centrado abajo de todo)
+  method anchoHitbox() = 15
+  method altoHitbox() = 20
+  method image() = "nave.png"
 
-  }
-
-  method image(){
-    return "nave.png"
-  }
+  method posicionMedio(){ position = game.at(game.width() / 2, 30) }
   
   method mover(){
     var nuevaPosicion = direccion.siguientePosicion(position, pixeles_velocidad)

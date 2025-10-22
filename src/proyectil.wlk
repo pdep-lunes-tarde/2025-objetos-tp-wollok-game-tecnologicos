@@ -7,6 +7,9 @@ class Proyectil{
     const pixelesVelocidad = 5
     var property direccion = arriba
 
+    method anchoHitbox() = 4
+    method altoHitbox() = 10
+
     method image() = "bullet.png"
 
     method lanzar(){ game.addVisual(self) }

@@ -73,11 +73,55 @@ object spaceInvaders{
         })
     }
 
-    method colisionInvaderVsNave(){
+    // Dos objetos a y b colisionan si su hitbox se superpone
+    method colision(a, b){
+        // --- Hitbox objeto a ---
+        const a_x0 = a.position().x() // posicion en X
+        const a_y0 = a.position().y() // posicion en Y
+        const a_x1 = a_x0 + a.anchoHitbox() // ancho en X
+        const a_y1 = a_y0 + a.altoHitbox() // alto en Y
 
+        // --- Hitbox objeto b ---
+        const b_x0 = b.position().x() // posicion en X
+        const b_y0 = b.position().y() // posicion en Y
+        const b_x1 = b_x0 + b.anchoHitbox() // ancho en X
+        const b_y1 = b_y0 + b.altoHitbox() // alto en Y
+        
+        /*
+         *        y1 ┌───┐
+         *           │ ☻ │
+         *        y0 └───┘
+         *          x0  x1
+        */
+
+        // Es mas fácil chequear que no colisionen,
+        // Si es NO es VERDAD que noHayColision => hay colisión 
+        // ~(~p) => p
+        const noHayColision = ( 
+            a_x1 < b_x0 || a_x0 > b_x1 // no se superponen en el eje X
+            ||
+            a_y1 < b_y0 || a_y0 > b_y1 // no se superponen en el eje y
+        ) // con que se cumpla uno no hay colisión
+        return !noHayColision
     }
+
     method colisionNaveVsInvader(){
-    
+        proyectilesNave.forEach({ proyectil =>
+            const invaderChocado = flota.aliens().find({ invader =>
+                self.colision(proyectil, invader)
+            })
+            
+            if (invaderChocado != null){
+                proyectil.desactivar()
+                proyectilesNave.remove(proyectil)
+                invaderChocado.destruir()
+            }
+        })
+    }
+    method colisionInvaderVsNave(){
+        proyectilesInvader.forEach({ proyectil =>
+            const naveChocada
+        })
     }
     method colisionMuros() {
         
