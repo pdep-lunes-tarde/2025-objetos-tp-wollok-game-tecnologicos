@@ -1,7 +1,7 @@
 import src.spaceInvaders.*
-
 import wollok.game.*
 import proyectil.Proyectil
+
 object nave{
   var property position = game.at(0,0)
   const pixeles_velocidad = 2
@@ -39,21 +39,13 @@ object nave{
 }
 
 object izquierda {
-  method siguientePosicion(posicion, velocidad) {
-    return posicion.left(velocidad)
-  }
+  method siguientePosicion(posicion, velocidad) = posicion.left(velocidad)
 }
 
 object derecha {
-  method siguientePosicion(posicion, velocidad) {
-    return posicion.right(velocidad)
-  }
+  method siguientePosicion(posicion, velocidad) = posicion.right(velocidad)
 }
 
 object sinDireccion{
-  method siguientePosicion(posicion, _) {
-    return posicion
-  }
+  method siguientePosicion(posicion, _) = posicion
 }
-
- 

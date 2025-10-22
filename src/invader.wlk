@@ -17,26 +17,18 @@ class Invader {// class
        })
    }*/
 
-
-
-
   /*  method techocoElProyectil() {
        // proyectil.desactivar()
         game.removeVisual(self)
         miFlota.removerAlien(self)
     }*/
-
-     method moverse(nuevaPosicion) {
-        position = nuevaPosicion
-    }
+    
+    method moverse(nuevaPosicion) { position = nuevaPosicion }
 
     method disparar(){
         const proyectil_invader = new Proyectil_alien(position=self.position())
         proyectil_invader.lanzar()
         return proyectil_invader
     }
-
-   
-    
 }
 

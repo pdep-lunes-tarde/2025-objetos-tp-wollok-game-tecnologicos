@@ -29,17 +29,15 @@ var property aliens = []
  }
 
 
- method removerAlien(alien) {
-  aliens.remove(alien)
-}
+    method removerAlien(alien) { aliens.remove(alien) }
 
-method ordenarDisparoAleatorio() {
-    if (not aliens.isEmpty()) {
-        const alienQueDispara = aliens.anyOne()
-        const proyectilCreado = alienQueDispara.disparar()
+    method ordenarDisparoAleatorio() {
+        if (not aliens.isEmpty()) {
+            const alienQueDispara = aliens.anyOne()
+            const proyectilCreado = alienQueDispara.disparar()
 
-        return proyectilCreado 
+            return proyectilCreado 
+        }
+        return null 
     }
-    return null 
-}
 }
