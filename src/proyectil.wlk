@@ -1,8 +1,8 @@
 import wollok.game.*
-import spaceInvaders.spaceInvaders
+import spaceInvaders.*
 import nave.*
 
-class Proyectil{
+class Proyectil inherits Desactivar {
     var property position 
     const pixelesVelocidad = 5
     var property direccion = arriba
@@ -17,8 +17,6 @@ class Proyectil{
     method mover() { position = self.siguiente_posicion() }
 
     method estaFueraDePantalla() = (self.position().y() > game.height() || self.position().y() < 0)
-
-    method desactivar(){ game.removeVisual(self) }
     
     method siguiente_posicion() = direccion.siguientePosicion(self.position(), pixelesVelocidad) 
     

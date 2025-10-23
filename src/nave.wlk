@@ -2,7 +2,7 @@ import src.spaceInvaders.*
 import wollok.game.*
 import proyectil.Proyectil
 
-object nave{
+object nave inherits Desactivar{
   var property position = game.at(0,0)
   const pixeles_velocidad = 2
   var property direccion = sinDireccion
@@ -28,9 +28,9 @@ object nave{
     return nuevo_disparo
   }
 
-  method serDestruidaPor(proyectilEnemigo){
-
-  }
+  // method serDestruidaPor(proyectilEnemigo){
+  //   game.removeVisual(self)
+  // }
 
  
 }

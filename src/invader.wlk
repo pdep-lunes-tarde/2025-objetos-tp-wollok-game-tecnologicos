@@ -1,8 +1,9 @@
+import src.spaceInvaders.*
 import wollok.game.*
 import proyectil.*
 
 
-class Invader {// class
+class Invader inherits Desactivar{
     var property position 
     var property miFlota 
    

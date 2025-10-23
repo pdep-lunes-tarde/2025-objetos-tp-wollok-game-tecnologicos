@@ -114,17 +114,32 @@ object spaceInvaders{
             if (invaderChocado != null){
                 proyectil.desactivar()
                 proyectilesNave.remove(proyectil)
-                invaderChocado.destruir()
+                invaderChocado.desactivar()
             }
         })
     }
     method colisionInvaderVsNave(){
         proyectilesInvader.forEach({ proyectil =>
-            const naveChocada
+            if (self.colision(proyectil, nave)){
+                proyectil.desactivar()
+                proyectilesInvader.remove(proyectil)
+                nave.desactivar()
+            }
         })
     }
     method colisionMuros() {
+        proyectilesInvader.forEach({ proyectil =>
+            const muroChocado = muros.find({muro =>
+                self.colision(proyectil, muro)
+            })
+            if (muroChocado != null){
+                proyectil.desactivar()
+                proyectilesInvader.remove(proyectil)
+                muroChocado.recibirProyectil(proyectil)
+            }
+        })
         
+        muros.removeAll(muros.filter({m => m.vidas() == 0}))
     }
         
     method eliminarProyectilesFOV(){
@@ -155,4 +170,8 @@ object spaceInvaders{
         self.configurar()
         game.start()
     }
+}
+
+class Desactivar {
+    method desactivar(){ game.removeVisual(self)}
 }

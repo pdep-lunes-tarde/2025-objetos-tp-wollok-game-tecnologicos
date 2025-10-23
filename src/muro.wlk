@@ -1,20 +1,18 @@
 import wollok.game.*
-import juego.*
+import spaceInvaders.*
 
-class Muro {
-    var property position=game.origin()
-    var vidas=4
-    method image() {
-        return "pared.png"
-    }
-   method recibirProyectil(){
-    vidas=vidas-1
-    if(vidas==0){
-        game.removeVisual(self)
-    }
+class Muro inherits Desactivar {
+    var property position = game.origin()
+    var vidas = 4
+
+    method anchoHitbox() = 10
+    method altoHitbox() = 10
+
+    method image() { "pared.png" }
+
+    method recibirProyectil(){
+        vidas -= 1
+        if(vidas==0){ self.desactivar() }
    }
-    //method chocasteConSnake(unaSnake) {
-    //    juegoSnake.restart()
-    //}
 }
 
