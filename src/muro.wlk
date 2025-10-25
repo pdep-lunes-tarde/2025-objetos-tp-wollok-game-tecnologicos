@@ -6,7 +6,7 @@ object cfgMuro {
 }
 class Muro {
     var property position// = game.origin
-    var vidas = 4
+    var property vidas = 4
 
     method getVidas() = vidas
 

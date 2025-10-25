@@ -6,7 +6,7 @@ class Proyectil{
     var property direccion = arriba
 
     method anchoHitbox() = 2
-    method altoHitbox() = 2
+    method altoHitbox() = 4
 
     method image() = "bullet.png"
 

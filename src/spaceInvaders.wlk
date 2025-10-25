@@ -1,3 +1,4 @@
+import src.proyectil.*
 import wollok.game.*
 import nave.*
 // import invader.Invader
@@ -25,6 +26,8 @@ object spaceInvaders{
         game.addVisual(nave)
         //flota.crear() 
         self.crearMuros()
+
+        game.addVisual(new Proyectil(position=game.at(game.width()-2, 50)))
 
         keyboard.a().onPressDo { nave.direccion(izquierda) }
         keyboard.left().onPressDo { nave.direccion(izquierda) }
@@ -118,31 +121,37 @@ object spaceInvaders{
     //         }
     //     })
     // }
-    // method colisionMuros() {
-    //     proyectilesNave.forEach({ proyectil =>
-    //         const muroChocado = muros.find({muro =>
-    //             self.colision(proyectil, muro)
-    //         })
-    //         if (muroChocado != null){
-    //             proyectil.desactivar()
-    //             proyectilesNave.remove(proyectil)
-    //             muroChocado.recibirProyectil()
-    //         }
-    //     })
 
-    //     proyectilesInvader.forEach({ proyectil =>
-    //         const muroChocado = muros.find({muro =>
-    //             self.colision(proyectil, muro)
-    //         })
-    //         if(muroChocado != null){
-    //             proyectil.desactivar()
-    //             proyectilesInvader.remove(proyectil)
-    //             muroChocado.recibirProyectil()
-    //         }
-    //     })
+    method colisionMuros(){
+        //Busca los proyectiles que colisionan con algún muro
+        const chocadosNave = proyectilesNave.filter({ p => muros.any({m => self.colision(p, m)})})
+        const chocadosInvader = proyectilesInvader.filter({ p => muros.any({m => self.colision(p, m)})})
 
-    //     muros.removeAll(muros.filter({m => m.getVidas() == 0}))
-    // }
+        // Para cada proyectil obtiene el muro con el que colisiona y procesa colisión
+        chocadosNave.forEach({ p =>
+            const muroChocado = muros.find({ m => self.colision(p, m) })
+            muroChocado.recibirProyectil()
+            p.desactivar()
+        })
+
+        chocadosInvader.forEach({ p =>
+            const muroChocado = muros.find({ m => self.colision(p, m) })
+            muroChocado.recibirProyectil()
+            p.desactivar()
+        })
+
+        // Elimina los proyectiles colisionados de la lista de proyectiles
+        if(!chocadosNave.isEmpty()){ 
+            proyectilesNave = proyectilesNave.filter({ p => !chocadosNave.contains(p)})
+        }
+
+        if(!chocadosInvader.isEmpty()){ 
+            proyectilesInvader = proyectilesInvader.filter({ p => !chocadosInvader.contains(p)})
+        }
+
+        // Elimina los muros colisionados de la lista de muros
+        muros.removeAll(muros.filter({m => m.vidas() == 0}))
+    }
         
     method eliminarProyectilesFOV(){
         //Proyectiles de la nave

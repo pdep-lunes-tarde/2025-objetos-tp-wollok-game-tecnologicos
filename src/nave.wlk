@@ -26,7 +26,7 @@ object nave{
   //--------proyectiles--------
   method disparar(){
     const nuevo_disparo = new Proyectil(position = 
-      self.position().up(self.altoHitbox()).right(2))  //(ancho nave - ancho bala) / 2 = 2
+      self.position().up(self.altoHitbox()).right(5))  //(ancho nave - ancho bala) / 2 = 2
     nuevo_disparo.lanzar()
     return nuevo_disparo
   }
