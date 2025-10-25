@@ -1,16 +1,16 @@
 import wollok.game.*
-import spaceInvaders.*
-import nave.*
 
-class Proyectil inherits Desactivar {
+class Proyectil{
     var property position 
-    const pixelesVelocidad = 5
+    const pixelesVelocidad = 8
     var property direccion = arriba
 
-    method anchoHitbox() = 4
-    method altoHitbox() = 10
+    method anchoHitbox() = 2
+    method altoHitbox() = 2
 
     method image() = "bullet.png"
+
+    method desactivar() { game.removeVisual(self) }
 
     method lanzar(){ game.addVisual(self) }
 

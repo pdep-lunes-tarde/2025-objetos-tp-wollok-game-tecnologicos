@@ -1,16 +1,17 @@
-import src.spaceInvaders.*
+//import src.spaceInvaders.*
 import wollok.game.*
 import proyectil.*
 
-
-class Invader inherits Desactivar{
+class Invader {
     var property position 
     var property miFlota 
    
-    method anchoHitbox() = 15
-    method altoHitbox() = 15
+    method anchoHitbox() = 5
+    method altoHitbox() = 5
 
     method image() = "invader1.png"
+
+    method desactivar() { game.removeVisual(self) }
     
     method moverse(nuevaPosicion) { position = nuevaPosicion }
 

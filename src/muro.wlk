@@ -1,18 +1,24 @@
 import wollok.game.*
-import spaceInvaders.*
-
-class Muro inherits Desactivar {
-    var property position = game.origin()
+//import spaceInvaders.*
+object cfgMuro {
+    method anchoHitbox() = 14
+    method altoHitbox() = 13
+}
+class Muro {
+    var property position// = game.origin
     var vidas = 4
 
-    method anchoHitbox() = 10
-    method altoHitbox() = 10
+    method getVidas() = vidas
 
-    method image() { "pared.png" }
+    method anchoHitbox() = cfgMuro.anchoHitbox()
+    method altoHitbox() = cfgMuro.altoHitbox()
+
+    method image() = "pared.png" 
+
+    method desactivar() { game.removeVisual(self) }
 
     method recibirProyectil(){
-        vidas -= 1
+        vidas = vidas - 1
         if(vidas==0){ self.desactivar() }
    }
 }
-

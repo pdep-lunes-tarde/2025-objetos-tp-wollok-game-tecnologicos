@@ -1,9 +1,9 @@
 import wollok.game.*
 import nave.*
-import invader.Invader
-import flota.*
-import proyectil.*
-import muro.Muro
+// import invader.Invader
+// import flota.*
+// import proyectil.*
+import muro.*
 
 object spaceInvaders{
     var property proyectilesNave = []
@@ -23,11 +23,8 @@ object spaceInvaders{
         game.cellSize(5)
         nave.posicionMedio()
         game.addVisual(nave)
-        flota.crear() 
+        //flota.crear() 
         self.crearMuros()
-
-        // ------ Movimiento Nave -------
-        game.onTick(10, "moverNave", { nave.mover() })
 
         keyboard.a().onPressDo { nave.direccion(izquierda) }
         keyboard.left().onPressDo { nave.direccion(izquierda) }
@@ -39,10 +36,10 @@ object spaceInvaders{
         keyboard.down().onPressDo { nave.direccion(sinDireccion) }
 
         //--- Trigger disparos de flota ---
-        game.onTick(1000, "disparo_constante_flota", {
-            const proyectilInvader = flota.ordenarDisparoAleatorio()
-            proyectilesInvader.add(proyectilInvader)
-        })
+        // game.onTick(1000, "disparo_constante_flota", {
+        //     const proyectilInvader = flota.ordenarDisparoAleatorio()
+        //     proyectilesInvader.add(proyectilInvader)
+        // })
 
         //-------- Inputs Disparos --------
         keyboard.space().onPressDo{
@@ -59,16 +56,14 @@ object spaceInvaders{
         }
             
         // ---- Tick principal del Juego ---
-        game.onTick(50, 
+        game.onTick(20, 
         "actualizarJuego", {
-            // Mover proyectiles
+            
+            nave.mover()
             proyectilesNave.forEach({ p => p.mover() }) 
             proyectilesInvader.forEach({ p => p.mover()})
 
-            self.colisionInvaderVsNave()
-            self.colisionNaveVsInvader()
             self.colisionMuros()
-
             self.eliminarProyectilesFOV()
         })
     }
@@ -97,50 +92,57 @@ object spaceInvaders{
         // Es mas fácil chequear que no colisionen,
         // Si es NO es VERDAD que noHayColision => hay colisión 
         // ~(~p) => p
-        const noHayColision = ( 
-            a_x1 < b_x0 || a_x0 > b_x1 // no se superponen en el eje X
-            ||
-            a_y1 < b_y0 || a_y0 > b_y1 // no se superponen en el eje y
-        ) // con que se cumpla uno no hay colisión
+        const noHayColision = a_x1 < b_x0 || a_x0 > b_x1 || a_y1 < b_y0 || a_y0 > b_y1 // con que se cumpla uno no hay colisión
         return !noHayColision
     }
 
-    method colisionNaveVsInvader(){
-        proyectilesNave.forEach({ proyectil =>
-            const invaderChocado = flota.aliens().find({ invader =>
-                self.colision(proyectil, invader)
-            })
+    // method colisionNaveVsInvader(){
+    //     proyectilesNave.forEach({ proyectil =>
+    //         const invaderChocado = flota.aliens().find({ invader =>
+    //             self.colision(proyectil, invader)
+    //         })
             
-            if (invaderChocado != null){
-                proyectil.desactivar()
-                proyectilesNave.remove(proyectil)
-                invaderChocado.desactivar()
-            }
-        })
-    }
-    method colisionInvaderVsNave(){
-        proyectilesInvader.forEach({ proyectil =>
-            if (self.colision(proyectil, nave)){
-                proyectil.desactivar()
-                proyectilesInvader.remove(proyectil)
-                nave.desactivar()
-            }
-        })
-    }
-    method colisionMuros() {
-        proyectilesInvader.forEach({ proyectil =>
-            const muroChocado = muros.find({muro =>
-                self.colision(proyectil, muro)
-            })
-            if (muroChocado != null){
-                proyectil.desactivar()
-                proyectilesInvader.remove(proyectil)
-                muroChocado.recibirProyectil(proyectil)
-            }
-        })
-        
-        muros.removeAll(muros.filter({m => m.vidas() == 0}))
-    }
+    //         if (invaderChocado != null){
+    //             proyectil.desactivar()
+    //             proyectilesNave.remove(proyectil)
+    //             invaderChocado.desactivar()
+    //         }
+    //     })
+    // }
+    // method colisionInvaderVsNave(){
+    //     proyectilesInvader.forEach({ proyectil =>
+    //         if (self.colision(proyectil, nave)){
+    //             proyectil.desactivar()
+    //             proyectilesInvader.remove(proyectil)
+    //             nave.desactivar()
+    //         }
+    //     })
+    // }
+    // method colisionMuros() {
+    //     proyectilesNave.forEach({ proyectil =>
+    //         const muroChocado = muros.find({muro =>
+    //             self.colision(proyectil, muro)
+    //         })
+    //         if (muroChocado != null){
+    //             proyectil.desactivar()
+    //             proyectilesNave.remove(proyectil)
+    //             muroChocado.recibirProyectil()
+    //         }
+    //     })
+
+    //     proyectilesInvader.forEach({ proyectil =>
+    //         const muroChocado = muros.find({muro =>
+    //             self.colision(proyectil, muro)
+    //         })
+    //         if(muroChocado != null){
+    //             proyectil.desactivar()
+    //             proyectilesInvader.remove(proyectil)
+    //             muroChocado.recibirProyectil()
+    //         }
+    //     })
+
+    //     muros.removeAll(muros.filter({m => m.getVidas() == 0}))
+    // }
         
     method eliminarProyectilesFOV(){
         //Proyectiles de la nave
@@ -159,10 +161,21 @@ object spaceInvaders{
     }
 
     method crearMuros() {
-        muros.add(new Muro(position = game.at(40, 90)))
-        muros.add(new Muro(position = game.at(90, 90)))
-        muros.add(new Muro(position = game.at(140, 90)))
-        muros.add(new Muro(position = game.at(190, 90)))
+        const anchoMuro = cfgMuro.anchoHitbox()
+        const altura = 80
+        //Espacio libre entre muros: Pantalla - 4 * anchoMuro = 168px. Entre 5 gaps => 33,6 c/u. 
+        const gapInterno = 32 // Redondeo gap a 32
+        const gapExterno = 36 // 3 * 32 = 96 (gaps internos) => 56 (espacio muros) + 96 = 152 => 224 - 152 = 72 => 72 / 2 = 36
+        
+        const pos1 = gapExterno                     // 36
+        const pos2 = pos1 + anchoMuro + gapInterno  // 82
+        const pos3 = pos2 + anchoMuro + gapInterno  // 128
+        const pos4 = pos3 + anchoMuro + gapInterno  // 174
+
+        muros.add(new Muro(position = game.at(pos1, altura)))
+        muros.add(new Muro(position = game.at(pos2, altura)))
+        muros.add(new Muro(position = game.at(pos3, altura)))
+        muros.add(new Muro(position = game.at(pos4, altura)))
         muros.forEach({ m => game.addVisual(m) })
     }
 
@@ -170,8 +183,4 @@ object spaceInvaders{
         self.configurar()
         game.start()
     }
-}
-
-class Desactivar {
-    method desactivar(){ game.removeVisual(self)}
 }

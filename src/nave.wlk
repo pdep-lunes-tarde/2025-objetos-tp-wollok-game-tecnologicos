@@ -1,29 +1,32 @@
-import src.spaceInvaders.*
+//import src.spaceInvaders.*
 import wollok.game.*
 import proyectil.Proyectil
 
-object nave inherits Desactivar{
+object nave{
   var property position = game.at(0,0)
-  const pixeles_velocidad = 2
+  const pixeles_velocidad = 2.5
   var property direccion = sinDireccion
 
-  method anchoHitbox() = 15
-  method altoHitbox() = 20
+  method anchoHitbox() = 12
+  method altoHitbox() = 8
   method image() = "nave.png"
 
-  method posicionMedio(){ position = game.at(game.width() / 2, 30) }
+  method desactivar() { game.removeVisual(self) }
+
+  method posicionMedio(){ position = game.at((game.width() - self.anchoHitbox()) / 2, 30) }
   
   method mover(){
     var nuevaPosicion = direccion.siguientePosicion(position, pixeles_velocidad)
 
-    if(nuevaPosicion.x() >= 0 && nuevaPosicion.x()<= (game.width() - (10)) ){
+    if(nuevaPosicion.x() >= 0 && nuevaPosicion.x() + self.anchoHitbox() <= (game.width()) ){
       position = nuevaPosicion
     }
   }
 
   //--------proyectiles--------
   method disparar(){
-    const nuevo_disparo = new Proyectil(position = self.position().up(15))//.right(3))//creo una bala por disparo
+    const nuevo_disparo = new Proyectil(position = 
+      self.position().up(self.altoHitbox()).right(2))  //(ancho nave - ancho bala) / 2 = 2
     nuevo_disparo.lanzar()
     return nuevo_disparo
   }
