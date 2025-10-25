@@ -2,7 +2,7 @@ import src.proyectil.*
 import wollok.game.*
 import nave.*
 // import invader.Invader
-// import flota.*
+import flota.*
 // import proyectil.*
 import muro.*
 
@@ -26,8 +26,6 @@ object spaceInvaders{
         game.addVisual(nave)
         //flota.crear() 
         self.crearMuros()
-
-        game.addVisual(new Proyectil(position=game.at(game.width()-2, 50)))
 
         keyboard.a().onPressDo { nave.direccion(izquierda) }
         keyboard.left().onPressDo { nave.direccion(izquierda) }
@@ -99,29 +97,30 @@ object spaceInvaders{
         return !noHayColision
     }
 
-    // method colisionNaveVsInvader(){
-    //     proyectilesNave.forEach({ proyectil =>
-    //         const invaderChocado = flota.aliens().find({ invader =>
-    //             self.colision(proyectil, invader)
-    //         })
+    method colisionNaveVsInvader(){
+        proyectilesNave.forEach({ proyectil =>
+            const invaderChocado = flota.aliens().find({ invader =>
+                self.colision(proyectil, invader)
+            })
             
-    //         if (invaderChocado != null){
-    //             proyectil.desactivar()
-    //             proyectilesNave.remove(proyectil)
-    //             invaderChocado.desactivar()
-    //         }
-    //     })
-    // }
-    // method colisionInvaderVsNave(){
-    //     proyectilesInvader.forEach({ proyectil =>
-    //         if (self.colision(proyectil, nave)){
-    //             proyectil.desactivar()
-    //             proyectilesInvader.remove(proyectil)
-    //             nave.desactivar()
-    //         }
-    //     })
-    // }
+            if (invaderChocado != null){
+                proyectil.desactivar()
+                proyectilesNave.remove(proyectil)
+                invaderChocado.desactivar()
+            }
+        })
+    }
+    method colisionInvaderVsNave(){
+        proyectilesInvader.forEach({ proyectil =>
+            if (self.colision(proyectil, nave)){
+                proyectil.desactivar()
+                proyectilesInvader.remove(proyectil)
+                nave.desactivar()
+            }
+        })
+    }
 
+    // --- Código que tiene que recorrer 2 veces la lista pero funciona :) ---
     method colisionMuros(){
         //Busca los proyectiles que colisionan con algún muro
         const chocadosNave = proyectilesNave.filter({ p => muros.any({m => self.colision(p, m)})})
@@ -140,33 +139,53 @@ object spaceInvaders{
             p.desactivar()
         })
 
-        // Elimina los proyectiles colisionados de la lista de proyectiles
-        if(!chocadosNave.isEmpty()){ 
-            proyectilesNave = proyectilesNave.filter({ p => !chocadosNave.contains(p)})
-        }
-
-        if(!chocadosInvader.isEmpty()){ 
-            proyectilesInvader = proyectilesInvader.filter({ p => !chocadosInvader.contains(p)})
-        }
-
         // Elimina los muros colisionados de la lista de muros
         muros.removeAll(muros.filter({m => m.vidas() == 0}))
     }
-        
-    method eliminarProyectilesFOV(){
-        //Proyectiles de la nave
-        const fueraNave = proyectilesNave.filter({ p => p.estaFueraDePantalla() })
-        if (!fueraNave.isEmpty()){
-            fueraNave.forEach({ p => p.desactivar() })
-            proyectilesNave.removeAll(fueraNave)
-        }
 
-        //Proyectiles de los invaders
-        const fueraInvaders = proyectilesInvader.filter({ p => p.estaFueraDePantalla() })
-        if (!fueraInvaders.isEmpty()){
-            fueraInvaders.forEach({ p => p.desactivar() })
-            proyectilesInvader.removeAll(fueraInvaders)
-        }
+    // --- Codigo que recorre la lista una vez pero no funciona :( ---
+    // method colisionMuros() {
+    //     if(!proyectilesNave.isEmpty()){
+    //         proyectilesNave.forEach({ p =>
+    //             const muroChocado = muros.find({ m => self.colision(p, m) })
+    //             // if (muroChocado != null){
+    //             //     muroChocado.recibirProyectil()
+    //             //     p.desactivar()
+    //             // }
+
+    //             if(self.colision(p, muro)){
+    //                 muroChocado.recibirProyectil()
+    //                 p.desactivar()
+    //             }
+    //         })
+    //     }
+        
+    //     if(!proyectilesInvader.isEmpty()){
+    //         proyectilesInvader.forEach({ p =>
+    //             const muroChocado = muros.find({ m => self.colision(p, m) })
+    //             if (muroChocado != null){
+    //                 muroChocado.recibirProyectil()
+    //                 p.desactivar()
+    //             }
+    //         })
+    //     }
+    //     proyectilesNave = proyectilesNave.filter({ p => p.activo() })
+    //     proyectilesInvader = proyectilesInvader.filter({ p => p.activo() })
+
+    //     muros.removeAll(muros.filter({ m => m.vidas() == 0 }))
+    // }
+    
+    method eliminarProyectilesFOV(){
+        proyectilesNave.forEach({ p =>
+            if (p.estaFueraDePantalla()){ p.desactivar() }
+        })
+    
+        proyectilesInvader.forEach({ p =>
+        if (p.estaFueraDePantalla()) { p.desactivar() }
+        })
+        
+        proyectilesNave = proyectilesNave.filter({ p => p.activo() })
+        proyectilesInvader = proyectilesInvader.filter({ p => p.activo() })
     }
 
     method crearMuros() {

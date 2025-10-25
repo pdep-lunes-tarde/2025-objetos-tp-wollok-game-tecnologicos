@@ -4,13 +4,18 @@ class Proyectil{
     var property position 
     const pixelesVelocidad = 8
     var property direccion = arriba
+    var property activo = true
 
     method anchoHitbox() = 2
     method altoHitbox() = 4
 
     method image() = "bullet.png"
 
-    method desactivar() { game.removeVisual(self) }
+
+    method desactivar() { 
+        game.removeVisual(self) 
+        activo = false
+    }
 
     method lanzar(){ game.addVisual(self) }
 
