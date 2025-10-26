@@ -4,6 +4,9 @@ import invader.Invader
 
 object flota {
     var property aliens = []
+    var property direccion=derecha
+    const velocidadHorizontal=2
+    const velocidadVertical=5
 
     // Método para crear y posicionar a todos los aliens
     method crear() {
@@ -38,4 +41,48 @@ object flota {
         }
         return null 
     }
+
+    method moverFlota(){
+        if(self.alguienTocaBorde()){
+
+            self.bajarFlota()
+    
+            self.cambiarDireccion()
+        }else{
+            self.moverFlotaHorizontal()
+        }
+        
+    }
+
+    method alguienTocaBorde(){
+        return aliens.any({alien=>alien.invaderActivo()&&direccion.esBorde(alien.position(),alien.anchoHitbox())})
+    }
+
+    method bajarFlota(){
+        aliens.forEach({alien=>
+        const nuevPos=alien.position().down(velocidadVertical)
+        alien.moverse(nuevPos)
+        })
+    }
+
+    method cambiarDireccion(){
+        direccion=direccion.invertir()
+    }
+
+    method moverFlotaHorizontal(){
+        aliens.forEach({alien =>
+        const nuevaPos=direccion.siguientePosicion(alien.position(),velocidadHorizontal)
+        alien.moverse(nuevaPos)
+    })
+    }
+}
+object derecha{
+method siguientePosicion(posicion,velocidad)=posicion.right(velocidad)
+method esBorde(posicion,ancho)=posicion.x() + ancho >=game.width()-15//hay que ajustar!!!
+method invertir()=izquierda
+}
+object izquierda{
+method siguientePosicion(posicion,velocidad)=posicion.left(velocidad)
+method esBorde(posicion,ancho)=posicion.x()<=5//hay que ajustar!!!
+method invertir()=derecha
 }

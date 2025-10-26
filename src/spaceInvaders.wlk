@@ -66,6 +66,7 @@ object spaceInvaders{
             self.actualizarProyectilInvader()
             //limpieza
             self.limpieza()
+            flota.moverFlota()
             
         })
     }
