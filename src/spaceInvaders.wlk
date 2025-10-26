@@ -72,14 +72,14 @@ object spaceInvaders{
     }
     method actualizarProyectilInvader(){
         //movemos
-     proyectilesInvader.forEach({ p => p.mover()
-          if(self.colision(p,nave)){
-         p.desactivar()
+     proyectilesInvader.forEach({ proyectil => proyectil.mover()
+          if(self.colision(proyectil,nave)){
+         proyectil.desactivar()
          nave.desactivar()
-        } else if(self.choqueBalavsMuro(p)){
-            p.desactivar()
-        } else if(self.balaFueraDePantalla(p)){
-           p.desactivar()
+        } else if(self.choqueBalavsMuro(proyectil)){
+            proyectil.desactivar()
+        } else if(self.balaFueraDePantalla(proyectil)){
+           proyectil.desactivar()
         }
      })
 
