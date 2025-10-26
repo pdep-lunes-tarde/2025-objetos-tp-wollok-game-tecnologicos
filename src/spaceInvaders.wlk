@@ -76,6 +76,9 @@ object spaceInvaders{
           if(self.colision(proyectil,nave)){
          proyectil.desactivar()
          nave.desactivar()
+         self.limpiezaDePantallaCompleta()
+         game.boardGround("game_over.png")
+         //game.stop()
         } else if(self.choqueBalavsMuro(proyectil)){
             proyectil.desactivar()
         } else if(self.balaFueraDePantalla(proyectil)){
@@ -253,6 +256,25 @@ object spaceInvaders{
       self.eliminarProyectilesFOV()
       self.eliminarInvaders()
       self.eliminarMuro()
+    }
+
+    method limpiezaDePantallaCompleta() {
+        game.boardGround(null)
+        // Eliminar la nave (ya desactivada)
+        game.removeVisual(nave)
+
+        // Eliminar todos los invasores activos
+        flota.aliens().forEach({ alien => alien.desactivar() })
+        flota.aliens([]) // Vacía la lista de aliens
+        
+        // Eliminar todos los muros
+        muros.forEach({ muro => muro.desactivar() })
+        muros = [] // Vacía la lista de muros
+        
+        // Eliminar todos los proyectiles
+        if (proyectilesNave != null) { proyectilesNave.desactivar() }
+        proyectilesInvader.forEach({ p => p.desactivar() })
+        proyectilesInvader = [] // Vacía la lista de proyectiles enemigos
     }
 
     method jugar(){
