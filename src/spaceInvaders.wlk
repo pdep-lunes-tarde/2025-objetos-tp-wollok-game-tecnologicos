@@ -7,7 +7,7 @@ import flota.*
 import muro.*
 
 object spaceInvaders{
-    var property proyectilesNave = []
+    var property proyectilesNave =null //no hay una bala de la nave en el aire por lo tanto la nave puede disparar :)
     var property proyectilesInvader = []
     var property muros = []
 
@@ -24,7 +24,7 @@ object spaceInvaders{
         game.cellSize(5)
         nave.posicionMedio()
         game.addVisual(nave)
-        //flota.crear() 
+        flota.crear() 
         self.crearMuros()
 
         keyboard.a().onPressDo { nave.direccion(izquierda) }
@@ -37,37 +37,99 @@ object spaceInvaders{
         keyboard.down().onPressDo { nave.direccion(sinDireccion) }
 
         //--- Trigger disparos de flota ---
-        // game.onTick(1000, "disparo_constante_flota", {
-        //     const proyectilInvader = flota.ordenarDisparoAleatorio()
-        //     proyectilesInvader.add(proyectilInvader)
-        // })
+         game.onTick(1000, "disparo_constante_flota", {
+             const proyectilInvader = flota.ordenarDisparoAleatorio()
+              proyectilesInvader.add(proyectilInvader)
+        })
 
         //-------- Inputs Disparos --------
+        
         keyboard.space().onPressDo{
-            const proyectilNave = nave.disparar()
-            proyectilesNave.add(proyectilNave)
+         if(proyectilesNave==null){
+          proyectilesNave = nave.disparar()}
         }
         keyboard.up().onPressDo{
-            const proyectilNave = nave.disparar()
-            proyectilesNave.add(proyectilNave)
+          if(proyectilesNave==null){
+          proyectilesNave = nave.disparar()}
         }
         keyboard.w().onPressDo{
-            const proyectilNave = nave.disparar()
-            proyectilesNave.add(proyectilNave)
+         if(proyectilesNave==null){
+          proyectilesNave = nave.disparar()}
         }
             
         // ---- Tick principal del Juego ---
-        game.onTick(20, 
+        game.onTick(20, //40
         "actualizarJuego", {
-            
+            //movimiento
             nave.mover()
-            proyectilesNave.forEach({ p => p.mover() }) 
-            proyectilesInvader.forEach({ p => p.mover()})
-
-            self.colisionMuros()
-            self.eliminarProyectilesFOV()
+            self.actualizarProyectilNave()
+            self.actualizarProyectilInvader()
+            //limpieza
+            self.limpieza()
+            
         })
     }
+    method actualizarProyectilInvader(){
+        //movemos
+     proyectilesInvader.forEach({ p => p.mover()
+          if(self.colision(p,nave)){
+         p.desactivar()
+         nave.desactivar()
+        } else if(self.choqueBalavsMuro(p)){
+            p.desactivar()
+        } else if(self.balaFueraDePantalla(p)){
+           p.desactivar()
+        }
+     })
+
+    }
+        method actualizarProyectilNave(){
+    //mueve el proyectil
+     if(proyectilesNave!=null){
+        proyectilesNave.mover()
+     //chequea si la bala choco con algo
+       const invadersChocados=flota.aliens().filter({alien=>
+         alien.invaderActivo()&&self.colision(proyectilesNave,alien)
+       })
+    
+    //procesamos las colisiones
+    if(not invadersChocados.isEmpty()){
+        const invaderChocado=invadersChocados.first()
+        proyectilesNave.desactivar()
+        invaderChocado.desactivar()
+        proyectilesNave=null// indica que se puede tirar un proyectil de nuevo
+
+    } else if(self.choqueBalavsMuro(proyectilesNave)){
+        proyectilesNave.desactivar()
+        proyectilesNave=null
+
+    } else if(self.balaFueraDePantalla(proyectilesNave)){
+        proyectilesNave.desactivar()
+        proyectilesNave=null
+    }}
+    }
+
+    method choqueBalavsMuro(unProyectil){
+        var  huboChoque = false
+        //vemos si el proyectil choco a un muro
+        const murosChocados = muros.filter({ muro =>
+            self.colision(unProyectil, muro)
+        })
+       if (not murosChocados.isEmpty()){
+        const muroChocado=murosChocados.first()
+        muroChocado.recibirProyectil()
+        huboChoque= true
+       }
+       return huboChoque
+    }
+    method balaFueraDePantalla(unProyectil){
+        var salio=false
+        if(unProyectil.activo()&&unProyectil.estaFueraDePantalla()){
+            salio=true
+        }
+        return salio
+    }
+
 
     // Dos objetos a y b colisionan si su hitbox se superpone
     method colision(a, b){
@@ -97,51 +159,34 @@ object spaceInvaders{
         return !noHayColision
     }
 
-    method colisionNaveVsInvader(){
-        proyectilesNave.forEach({ proyectil =>
-            const invaderChocado = flota.aliens().find({ invader =>
-                self.colision(proyectil, invader)
-            })
-            
-            if (invaderChocado != null){
-                proyectil.desactivar()
-                proyectilesNave.remove(proyectil)
-                invaderChocado.desactivar()
-            }
-        })
-    }
-    method colisionInvaderVsNave(){
-        proyectilesInvader.forEach({ proyectil =>
-            if (self.colision(proyectil, nave)){
-                proyectil.desactivar()
-                proyectilesInvader.remove(proyectil)
-                nave.desactivar()
-            }
-        })
-    }
+  // method colisionInvaderVsNave(){ //choque de la bala del invader con la nave
+  //     proyectilesInvader.forEach({ proyectil =>
+  //        if (self.colision(proyectil, nave)){
+  //           proyectil.desactivar()
+  //           nave.desactivar()
+  //       }
+  //    })
+  // }
 
     // --- Código que tiene que recorrer 2 veces la lista pero funciona :) ---
-    method colisionMuros(){
+   // method colisionMuros(){
+    // proyectilesInvader.forEach({ p =>
+     //       self.choqueBalavsMuro(p)
+      //  })
         //Busca los proyectiles que colisionan con algún muro
-        const chocadosNave = proyectilesNave.filter({ p => muros.any({m => self.colision(p, m)})})
-        const chocadosInvader = proyectilesInvader.filter({ p => muros.any({m => self.colision(p, m)})})
-
-        // Para cada proyectil obtiene el muro con el que colisiona y procesa colisión
-        chocadosNave.forEach({ p =>
-            const muroChocado = muros.find({ m => self.colision(p, m) })
-            muroChocado.recibirProyectil()
-            p.desactivar()
-        })
+        /*const chocadosInvader = proyectilesInvader.filter({ p => muros.any({m => self.colision(p, m)})})
 
         chocadosInvader.forEach({ p =>
             const muroChocado = muros.find({ m => self.colision(p, m) })
             muroChocado.recibirProyectil()
             p.desactivar()
-        })
+        })*/
 
         // Elimina los muros colisionados de la lista de muros
-        muros.removeAll(muros.filter({m => m.vidas() == 0}))
-    }
+       // muros.removeAll(muros.filter({m => m.vidas() == 0}))
+
+      
+    //}
 
     // --- Codigo que recorre la lista una vez pero no funciona :( ---
     // method colisionMuros() {
@@ -175,19 +220,6 @@ object spaceInvaders{
     //     muros.removeAll(muros.filter({ m => m.vidas() == 0 }))
     // }
     
-    method eliminarProyectilesFOV(){
-        proyectilesNave.forEach({ p =>
-            if (p.estaFueraDePantalla()){ p.desactivar() }
-        })
-    
-        proyectilesInvader.forEach({ p =>
-        if (p.estaFueraDePantalla()) { p.desactivar() }
-        })
-        
-        proyectilesNave = proyectilesNave.filter({ p => p.activo() })
-        proyectilesInvader = proyectilesInvader.filter({ p => p.activo() })
-    }
-
     method crearMuros() {
         const anchoMuro = cfgMuro.anchoHitbox()
         const altura = 80
@@ -205,6 +237,21 @@ object spaceInvaders{
         muros.add(new Muro(position = game.at(pos3, altura)))
         muros.add(new Muro(position = game.at(pos4, altura)))
         muros.forEach({ m => game.addVisual(m) })
+    }
+    //----------limpieza------------
+    method eliminarMuro(){
+        muros.removeAll(muros.filter({ m => m.vidas() == 0 }))
+    }
+    method eliminarProyectilesFOV(){
+        proyectilesInvader = proyectilesInvader.filter({ p => p.activo() })
+    }
+    method eliminarInvaders(){
+      flota.aliens(flota.aliens().filter({ invader => invader.invaderActivo() }))
+    }
+    method limpieza(){
+      self.eliminarProyectilesFOV()
+      self.eliminarInvaders()
+      self.eliminarMuro()
     }
 
     method jugar(){

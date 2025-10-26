@@ -2,7 +2,7 @@ import wollok.game.*
 
 class Proyectil{
     var property position 
-    const pixelesVelocidad = 8
+    const pixelesVelocidad = 8 //12
     var property direccion = arriba
     var property activo = true
 
