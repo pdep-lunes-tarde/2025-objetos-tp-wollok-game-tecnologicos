@@ -16,7 +16,7 @@ object flota {
         const separacionEnY = 20
         const inicioX = 30
         const inicioY = 150
-        const indicesDeFilas = [0, 1, 2]
+        const indicesDeFilas = [0, 1, 2,3]
         const indicesDeColumnas = [0, 1, 2, 3, 4]
 
         indicesDeFilas.forEach({ fila =>

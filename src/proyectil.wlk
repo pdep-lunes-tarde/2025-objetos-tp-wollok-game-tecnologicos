@@ -2,7 +2,7 @@ import wollok.game.*
 
 class Proyectil{
     var property position 
-    const pixelesVelocidad = 8 //12
+    const pixelesVelocidad = 12 //12
     var property direccion = arriba
     var property activo = true
 
@@ -26,7 +26,7 @@ class Proyectil{
     method siguiente_posicion() = direccion.siguientePosicion(self.position(), pixelesVelocidad) 
     
 }
-class Proyectil_alien inherits Proyectil(direccion = abajo){}
+class Proyectil_alien inherits Proyectil(direccion = abajo ,pixelesVelocidad=6){}
 
 object arriba {
     method siguientePosicion(unaPosicion, pixeles) = unaPosicion.up(pixeles)
