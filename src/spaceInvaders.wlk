@@ -84,7 +84,6 @@ object spaceInvaders{
           if(self.colision(proyectil,nave)){
          proyectil.desactivar()
          nave.desactivar()
-         self.terminarJuego()
         } else if(self.choqueBalavsMuro(proyectil)){
             proyectil.desactivar()
         } else if(self.balaFueraDePantalla(proyectil)){
