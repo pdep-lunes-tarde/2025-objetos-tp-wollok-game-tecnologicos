@@ -17,12 +17,14 @@ object spaceInvaders{
     method alto() {
         return 256
     }
-    method configurar(){
+    method tamanio(){
         game.width(self.ancho())
         game.height(self.alto())
-        //game.boardGround("fondo.png") 
-        game.boardGround("darkPurple.png") 
         game.cellSize(5)
+    }
+    method configurar(){
+        game.boardGround("fondo.png") 
+        //game.boardGround("darkPurple.png") 
         nave.posicionMedio()
         game.addVisual(nave)
         flota.crear() 
@@ -38,27 +40,18 @@ object spaceInvaders{
         keyboard.down().onPressDo { nave.direccion(sinDireccion) }
 
         //--- Trigger disparos de flota ---
-         game.onTick(900, "disparo_constante_flota", {
-             const proyectilInvader = flota.ordenarDisparoAleatorio()
-              if (proyectilInvader != null) { 
-            proyectilesInvader.add(proyectilInvader)
-              }
+        game.onTick(1200, "disparo_constante_flota", {
+            const proyectilInvader = flota.ordenarDisparoAleatorio()
+            if (proyectilInvader != null) { 
+                proyectilesInvader.add(proyectilInvader)
+            }
         })
 
         //-------- Inputs Disparos --------
         
-        keyboard.space().onPressDo{
-         if(proyectilesNave==null){
-          proyectilesNave = nave.disparar()}
-        }
-        keyboard.up().onPressDo{
-          if(proyectilesNave==null){
-          proyectilesNave = nave.disparar()}
-        }
-        keyboard.w().onPressDo{
-         if(proyectilesNave==null){
-          proyectilesNave = nave.disparar()}
-        }
+        keyboard.space().onPressDo{if(proyectilesNave==null){ proyectilesNave = nave.disparar() }}
+        keyboard.up().onPressDo{if(proyectilesNave==null){ proyectilesNave = nave.disparar() }}
+        keyboard.w().onPressDo{if(proyectilesNave==null){ proyectilesNave = nave.disparar() }}
             
         // ---- Tick principal del Juego ---
         game.onTick(20, //40
@@ -69,56 +62,54 @@ object spaceInvaders{
             self.actualizarProyectilInvader()
             //limpieza
             self.limpieza()
-           
         })
 
         game.onTick(500, //40
         "movimientoFlota", {
             flota.moverFlota()
         })
-
     }
+
     method actualizarProyectilInvader(){
         //movemos
-     proyectilesInvader.forEach({ proyectil => proyectil.mover()
-          if(self.colision(proyectil,nave)){
-         proyectil.desactivar()
-         nave.desactivar()
-        } else if(self.choqueBalavsMuro(proyectil)){
-            proyectil.desactivar()
-        } else if(self.balaFueraDePantalla(proyectil)){
-           proyectil.desactivar()
-        }
-     })
-
+        proyectilesInvader.forEach({ proyectil => proyectil.mover()
+            if(self.colision(proyectil,nave)){
+                proyectil.desactivar()
+                nave.desactivar()
+                self.terminarJuego()
+            } else if(self.choqueBalavsMuro(proyectil)){
+                proyectil.desactivar()
+            } else if(self.balaFueraDePantalla(proyectil)){
+                proyectil.desactivar()
+            }
+        })
     }
+
     method actualizarProyectilNave(){
-    //mueve el proyectil
-     if(proyectilesNave!=null){
-        proyectilesNave.mover()
-     //chequea si la bala choco con algo
-       const invadersChocados=flota.aliens().filter({alien=>
-         alien.invaderActivo()&&self.colision(proyectilesNave,alien)
-       })
-    
-    //procesamos las colisiones
-    if(not invadersChocados.isEmpty()){
-        const invaderChocado=invadersChocados.first()
-        proyectilesNave.desactivar()
-        invaderChocado.desactivar()
-        proyectilesNave=null// indica que se puede tirar un proyectil de nuevo
-        if (flota.aliens().isEmpty()) {
-        self.ganarJuego() // Llama a un nuevo método para la victoria
-    }
-
-    } else if(self.choqueBalavsMuro(proyectilesNave)){
-        proyectilesNave.desactivar()
-        proyectilesNave=null
-
-    } else if(self.balaFueraDePantalla(proyectilesNave)){
-        proyectilesNave.desactivar()
-        proyectilesNave=null
-    }}
+        //mueve el proyectil
+        if(proyectilesNave!=null){
+            proyectilesNave.mover()
+            //chequea si la bala choco con algo
+            const invadersChocados=flota.aliens().filter({alien=>
+                alien.invaderActivo()&&self.colision(proyectilesNave,alien)
+            })
+            //procesamos las colisiones
+            if(not invadersChocados.isEmpty()){
+                const invaderChocado=invadersChocados.first()
+                proyectilesNave.desactivar()
+                invaderChocado.desactivar()
+                proyectilesNave=null// indica que se puede tirar un proyectil de nuevo
+                if (flota.aliens().isEmpty()) {
+                    self.ganarJuego() // Llama a un nuevo método para la victoria
+                }
+            } else if(self.choqueBalavsMuro(proyectilesNave)){
+                proyectilesNave.desactivar()
+                proyectilesNave=null
+            } else if(self.balaFueraDePantalla(proyectilesNave)){
+                proyectilesNave.desactivar()
+                proyectilesNave=null
+            }
+        }
     }
 
     method choqueBalavsMuro(unProyectil){
@@ -127,13 +118,14 @@ object spaceInvaders{
         const murosChocados = muros.filter({ muro =>
             self.colision(unProyectil, muro)
         })
-       if (not murosChocados.isEmpty()){
-        const muroChocado=murosChocados.first()
-        muroChocado.recibirProyectil()
-        huboChoque= true
-       }
-       return huboChoque
+        if (not murosChocados.isEmpty()){
+            const muroChocado=murosChocados.first()
+            muroChocado.recibirProyectil()
+            huboChoque= true
+        }
+        return huboChoque
     }
+
     method balaFueraDePantalla(unProyectil){
         var salio=false
         if(unProyectil.activo()&&unProyectil.estaFueraDePantalla()){
@@ -197,65 +189,63 @@ object spaceInvaders{
         proyectilesInvader = proyectilesInvader.filter({ p => p.activo() })
     }
     method eliminarInvaders(){
-      flota.aliens(flota.aliens().filter({ invader => invader.invaderActivo() }))
+        flota.aliens(flota.aliens().filter({ invader => invader.invaderActivo() }))
     }
     method limpieza(){
-      self.eliminarProyectilesFOV()
-      self.eliminarInvaders()
-      self.eliminarMuro()
+        self.eliminarProyectilesFOV()
+        self.eliminarInvaders()
+        self.eliminarMuro()
     }
-     method ganarJuego(){
+    method ganarJuego(){
         game.clear()
-    //falta terminar
     }
+
     method terminarJuego(){
         game.removeTickEvent("disparo_constante_flota")
         game.removeTickEvent("movimientoFlota")
         game.removeTickEvent("actualizarJuego")
-        //eliminar visuales
+        
+        //Eliminar visuales
         flota.aliens().forEach({ alien => game.removeVisual(alien) })
         proyectilesInvader.forEach({ bala => game.removeVisual(bala) })
         if (proyectilesNave != null) game.removeVisual(proyectilesNave)
         muros.forEach({ muro => game.removeVisual(muro) })
-        //agrego los visuales
-        game.clear() // 
-        game.addVisual(gameOver)
-        game.addVisual(instrucciones)
-        keyboard.r().onPressDo({
-        self.reiniciarJuego()
-    })
-        keyboard.q().onPressDo({
-        game.clear()
         
-    })
+        //agrego los visuales
+        game.clear()
+        game.addVisual(gameOver)
+        game.boardGround("darkPurple.png")
+        game.addVisual(instrucciones)
+        keyboard.r().onPressDo({ self.reiniciarJuego() })
+        keyboard.q().onPressDo({ game.stop() })
     
 }
     method reiniciarJuego(){
- /*proyectilesInvader = []
-    proyectilesNave = null
-    muros = []
-    flota.aliens([])
-    //game.clear()
-    game.removeVisual(gameOver)
-    game.removeVisual(instrucciones)
-    self.configurar()*/
-   
+        proyectilesInvader = []
+        proyectilesNave = null
+        muros = []
+        nave.direccion(sinDireccion)
+        flota.aliens([])
+        //game.clear()
+        game.removeVisual(gameOver)
+        game.removeVisual(instrucciones)
+        self.configurar()
     }
 
   method jugar(){
+        self.tamanio()
         self.configurar()
         game.start()
-        
     }
 
 }
 
-  object gameOver{
+object gameOver{
     method image() = "gameOver.jpg"
-  method position() =  game.at(55,128)
-  //method text() = "¡GAME OVER!"
-    }
-    object instrucciones {
+    method position() =  game.at(55,128)
+    //method text() = "¡GAME OVER!"
+}
+object instrucciones {
     method image() = "instrucciones.png"
     method position() = game.at (75,80)
 }

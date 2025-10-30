@@ -1,8 +1,8 @@
 import spaceInvaders.spaceInvaders
 
 program juego {
-//spaceInvaders.jugar()
-    spaceInvaders.configurar()
-    game.start()
+    spaceInvaders.jugar()
+    // spaceInvaders.configurar()
+    // game.start()
 
 }
