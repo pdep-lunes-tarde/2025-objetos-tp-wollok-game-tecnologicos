@@ -10,6 +10,7 @@ object spaceInvaders{
     var property proyectilesNave =null //no hay una bala de la nave en el aire por lo tanto la nave puede disparar :)
     var property proyectilesInvader = []
     var property muros = []
+    var property musicaDeFondo=null
 
     method ancho() {
         return 224
@@ -23,8 +24,14 @@ object spaceInvaders{
         game.cellSize(5)
     }
     method configurar(){
-        game.boardGround("fondo.png") 
+        game.boardGround("black.png") 
+        //game.boardGround("fondo.png") 
         //game.boardGround("darkPurple.png") 
+        //------------------sonido de fondo----------------
+        musicaDeFondo=game.sound("8BitCave.wav")
+        musicaDeFondo.shouldLoop(true)
+        game.schedule(500, { musicaDeFondo.play()} )
+        //-------------------------------------------------
         nave.posicionMedio()
         game.addVisual(nave)
         flota.crear() 
@@ -49,9 +56,9 @@ object spaceInvaders{
 
         //-------- Inputs Disparos --------
         
-        keyboard.space().onPressDo{if(proyectilesNave==null){ proyectilesNave = nave.disparar() }}
-        keyboard.up().onPressDo{if(proyectilesNave==null){ proyectilesNave = nave.disparar() }}
-        keyboard.w().onPressDo{if(proyectilesNave==null){ proyectilesNave = nave.disparar() }}
+        keyboard.space().onPressDo{if(proyectilesNave==null){ proyectilesNave = nave.disparar()  game.sound("synth_laser_08.ogg").play()}}
+        keyboard.up().onPressDo{if(proyectilesNave==null){ proyectilesNave = nave.disparar()  game.sound("synth_laser_08.ogg").play()}}
+        keyboard.w().onPressDo{if(proyectilesNave==null){ proyectilesNave = nave.disparar()  game.sound("synth_laser_08.ogg").play()}}
             
         // ---- Tick principal del Juego ---
         game.onTick(20, //40
@@ -62,6 +69,9 @@ object spaceInvaders{
             self.actualizarProyectilInvader()
             //limpieza
             self.limpieza()
+            if (flota.aliens().isEmpty()) {
+             self.ganarJuego() // Llama a un nuevo método para la victoria
+            }
         })
 
         game.onTick(500, //40
@@ -75,8 +85,9 @@ object spaceInvaders{
         proyectilesInvader.forEach({ proyectil => proyectil.mover()
             if(self.colision(proyectil,nave)){
                 proyectil.desactivar()
+                game.sound("retro_die_03.ogg").play()
                 nave.desactivar()
-                self.terminarJuego()
+                self.finalizarJuego()
             } else if(self.choqueBalavsMuro(proyectil)){
                 proyectil.desactivar()
             } else if(self.balaFueraDePantalla(proyectil)){
@@ -95,13 +106,11 @@ object spaceInvaders{
             })
             //procesamos las colisiones
             if(not invadersChocados.isEmpty()){
+                game.sound("retro_die_01.ogg").play()
                 const invaderChocado=invadersChocados.first()
                 proyectilesNave.desactivar()
                 invaderChocado.desactivar()
                 proyectilesNave=null// indica que se puede tirar un proyectil de nuevo
-                if (flota.aliens().isEmpty()) {
-                    self.ganarJuego() // Llama a un nuevo método para la victoria
-                }
             } else if(self.choqueBalavsMuro(proyectilesNave)){
                 proyectilesNave.desactivar()
                 proyectilesNave=null
@@ -196,25 +205,20 @@ object spaceInvaders{
         self.eliminarInvaders()
         self.eliminarMuro()
     }
-    method ganarJuego(){
-        game.clear()
-    }
+   
 
-    method terminarJuego(){
+    method terminarPartida(visual){
         game.removeTickEvent("disparo_constante_flota")
         game.removeTickEvent("movimientoFlota")
         game.removeTickEvent("actualizarJuego")
-        
-        //Eliminar visuales
-        flota.aliens().forEach({ alien => game.removeVisual(alien) })
-        proyectilesInvader.forEach({ bala => game.removeVisual(bala) })
-        if (proyectilesNave != null) game.removeVisual(proyectilesNave)
-        muros.forEach({ muro => game.removeVisual(muro) })
-        
+        //-----parar sonido--------
+        if(musicaDeFondo!=null){
+            musicaDeFondo.stop()
+        }
+        //-----------------------------
+        game.clear()//->saca todos los visuales
         //agrego los visuales
-        game.clear()
-        game.addVisual(gameOver)
-        game.boardGround("darkPurple.png")
+        game.addVisual(visual)
         game.addVisual(instrucciones)
         keyboard.r().onPressDo({ self.reiniciarJuego() })
         keyboard.q().onPressDo({ game.stop() })
@@ -226,12 +230,15 @@ object spaceInvaders{
         muros = []
         nave.direccion(sinDireccion)
         flota.aliens([])
-        //game.clear()
-        game.removeVisual(gameOver)
-        game.removeVisual(instrucciones)
+        game.clear()
         self.configurar()
     }
-
+  method ganarJuego(){
+        self.terminarPartida(win)
+    }
+  method finalizarJuego(){
+     self.terminarPartida(gameOver)
+  }
   method jugar(){
         self.tamanio()
         self.configurar()
@@ -243,9 +250,13 @@ object spaceInvaders{
 object gameOver{
     method image() = "gameOver.jpg"
     method position() =  game.at(55,128)
-    //method text() = "¡GAME OVER!"
 }
 object instrucciones {
     method image() = "instrucciones.png"
     method position() = game.at (75,80)
+}
+
+object win{
+     method image() = "win.png"
+    method position() =  game.at(55,128)
 }

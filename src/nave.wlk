@@ -11,7 +11,7 @@ object nave{
   method altoHitbox() = 8
   method image() = "nave.png"
 
-  method desactivar() { game.removeVisual(self) }
+  method desactivar() { game.removeVisual(self)}
 
   method posicionMedio(){ position = game.at((game.width() - self.anchoHitbox()) / 2, 30) }
   
